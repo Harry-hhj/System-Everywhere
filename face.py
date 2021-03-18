@@ -1,6 +1,8 @@
 import face_recognition
 import cv2
 import threading
+import time
+
 
 class FaceRecognition:
     def __init__(self, names: list, features: list, callback):
@@ -16,10 +18,13 @@ class FaceRecognition:
         face_encodings = []
         face_names = []
         process_this_frame = True
+        print(self.features)
 
         while True:
             # 读取摄像头画面
             ret, frame = self.video_capture.read()
+            if not ret:
+                continue
             # out.write(cv2.resize(frame, (1920, 1080)))
 
             # 改变摄像头图像的大小，图像小，所做的计算就少
@@ -37,8 +42,10 @@ class FaceRecognition:
                 face_names = []
                 for face_encoding in face_encodings:
                     # 默认为unknown
-                    matches = face_recognition.compare_faces(self.features, face_encoding, tolerance=0.39)
+                    matches = face_recognition.compare_faces(face_encoding, self.features, tolerance=0.39)
                     name = "Unknown"
+                    print(self.names)
+                    print(matches)
 
                     if True in matches:
                         first_match_index = matches.index(True)
@@ -63,8 +70,10 @@ class FaceRecognition:
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+                print(name)
 
-            callback.emit((frame, face_names))
+            callback.emit(frame, face_names)
+            time.sleep(1)
 
     def __del__(self):
         self.video_capture.release()

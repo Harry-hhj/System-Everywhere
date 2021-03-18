@@ -19,7 +19,6 @@ import numpy as np
 import cv2
 
 
-
 class GlobalVars(object):
     def __init__(self):
         self.init_time = time.time()
@@ -54,6 +53,8 @@ def timer(timer_signal: QtCore.pyqtSignal(str), alarm_signal: QtCore.pyqtSignal(
         if t - t_ >= 1:
             t_ = t
             timer_signal.emit(TimeStamp2Time(t))
+        else:
+            time.sleep(0.5)
         delta_t = t - globalVars.init_time
         if globalVars.alarm:
             if globalVars.debug:
@@ -199,7 +200,7 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
     def __init__(self):
         super(Register, self).__init__()
         self.setupUi(self)
-        self.newCol = False
+        self.newCol = True
         self.directory = ''
         self.ready = False
 
@@ -212,10 +213,13 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
         self.detect_signal.connect(self.detect_callback)
 
     def init(self):
+        self.new_line.setChecked(True)
         # start my timer
         thread = threading.Thread(target=timer2, args=(self.time_signal,))
         thread.setDaemon(True)
         thread.start()
+
+        self.date = time.strftime("%Y-%m-%d", time.localtime(time.time()))
 
     def load(self):
         # self.fileName, fileType = QtWidgets.QFileDialog.getOpenFileName(self, "选取文件", os.getcwd(), "All Files(*)")  # ;;Text Files(*.txt)
@@ -229,14 +233,14 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
         print(os.listdir(self.directory))
         for file in os.listdir(self.directory):
             if os.path.splitext(file)[-1] == '.xlsx':  # xlsx
-                print("find")
-                df: pd.DataFrame = pd.read_excel(self.directory + rf"/{file}")
-                for row in df.iteritems():
+                self.df: pd.DataFrame = pd.read_excel(self.directory + rf"/{file}")
+                for row in self.df.iteritems():
                     self.student_list = list(row[1])
+                    print(self.student_list)
                     break
         for stu in self.student_list:
             if os.path.exists(self.directory + '/' + stu + '.mat'):
-                self.student_features.append(scio.loadmat(self.directory + '/' + stu + '.mat')['X'])
+                self.student_features.append(scio.loadmat(self.directory + '/' + stu + '.mat')['X'].squeeze())
             else:
                 print(f"{stu}'s feature not exists.")
                 return
@@ -244,7 +248,11 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
         print(self.student_list)
         print(self.student_features)
         if self.newCol:
-            pass#TODO
+            self.df[self.date] = [False] * len(self.student_list)
+            print(self.df)
+        #### TODO
+        self.df.to_excel(excel_writer='test.xlsx', header=True, index=False)
+        self.finish_loading_callback()
 
     def add_new_column(self):
         self.newCol = self.new_line.isChecked()

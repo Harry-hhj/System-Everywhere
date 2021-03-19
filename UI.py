@@ -56,24 +56,55 @@ def timer(timer_signal: QtCore.pyqtSignal(str), alarm_signal: QtCore.pyqtSignal(
         else:
             time.sleep(0.5)
         delta_t = t - globalVars.init_time
+        sign = [False] * 7
         if globalVars.alarm:
             if globalVars.debug:
+                if not sign[0]:
+                    alarm_signal.emit("第一节课上课中")
+                    sign[0] = True
                 if delta_t > 35:
-                    if delta_t > 75:
-                        if delta_t > 90:
-                            alarm_signal.emit("距第二节下课还有5分钟,请您注意上课时间")
-                        else:
-                            alarm_signal.emit("第二节课已过半,请您注意上课时间")
-                    else:
+                    if delta_t > 45:
+                        if delta_t > 55:
+                            if delta_t > 75:
+                                if delta_t > 90:
+                                    if delta_t > 100 and not sign[6]:
+                                        alarm_signal.emit("下课中...")
+                                        sign[6] = True
+                                    elif not sign[5]:
+                                        alarm_signal.emit("距第二节下课还有5分钟,请您注意上课时间")
+                                        sign[5] = True
+                                elif not sign[4]:
+                                    alarm_signal.emit("第二节课已过半,请您注意上课时间")
+                                    sign[4] = True
+                            elif not sign[3]:
+                                alarm_signal.emit("第二节课上课中")
+                                sign[3] = True
+                        elif not sign[2]:
+                            alarm_signal.emit("课间休息中")
+                            sign[2] = True
+                    elif not sign[1]:
                         alarm_signal.emit("距第一节下课还有10分钟,请您注意上课时间")
+                        sign[1] = True
             else:
+                if not sign[0]:
+                    alarm_signal.emit("第一节课上课中")
                 if delta_t > 35 * 60 * 60:
-                    if delta_t > 75 * 60 * 60:
-                        if delta_t > 90 * 60 * 60:
-                            alarm_signal.emit("距第二节下课还有5分钟,请您注意上课时间")
-                        else:
-                            alarm_signal.emit("第二节课已过半,请您注意上课时间")
-                    else:
+                    if delta_t > 45 * 60 * 60:
+                        if delta_t > 55 * 60 * 60:
+                            if delta_t > 75 * 60 * 60:
+                                if delta_t > 90 * 60 * 60:
+                                    if delta_t > 100 * 60 * 60 and not sign[6]:
+                                        alarm_signal.emit("下课中...")
+                                        sign[6] = True
+                                    elif not sign[5]:
+                                        alarm_signal.emit("距第二节下课还有5分钟,请您注意上课时间")
+                                elif not sign[4]:
+                                    alarm_signal.emit("第二节课已过半,请您注意上课时间")
+                            elif not sign[3]:
+                                alarm_signal.emit("第二节课上课中")
+                        elif not sign[2]:
+                            alarm_signal.emit("课间休息中")
+                    elif not sign[1]:
                         alarm_signal.emit("距第一节下课还有10分钟,请您注意上课时间")
         if globalVars.debug:
             new_progress = int(delta_t)
@@ -124,6 +155,11 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
 
         self.plot = Myplot()
         self.btn6.setVisible(False)
+
+        self.course.setText("应用程序课程设计")
+        self.schedule.setText("周五 10:00-11:40")
+        self.teacher.setText("黄征老师")
+        self.feedback.setText("上课中...")
 
     def update_time(self, string):
         '''

@@ -9,7 +9,7 @@ print()
 
 inp = []
 
-for img in os.listdir('./'):
+for img in os.listdir('../'):
     if os.path.splitext(img)[-1] in ['.jpg', '.png', '.jpeg', '.JPG', '.PNG', '.JPEG']:
         image = face_recognition.load_image_file(img)
         face_encoding = face_recognition.face_encodings(image)[0]

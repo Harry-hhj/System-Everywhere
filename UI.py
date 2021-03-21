@@ -1,13 +1,12 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtGui import QImage, QPixmap, QFont, QPainter
-from PyQt5.QtChart import QLineSeries, QValueAxis, QChartView
+from PyQt5.QtGui import QImage, QPixmap
 
 from src.entry import Ui_Entry
 from src.random import Ui_Random
 from src.register import Ui_Register
 from src.myplot import Myplot
-from src.WhiteBoard import WhiteBoard
-from face import FaceRecognition
+from app.face import FaceRecognition
+from app.paint.paint import Paint
 
 import sys
 import os
@@ -32,7 +31,8 @@ globalVars = GlobalVars()
 UI_wrapper for Ui_Entry
 Function:
 1. timer -- show_time, time_warning, progress_bar
-2. 
+2. scene -- classroom, workspace, meeting
+3. 
 '''''''''''''''''''''''''''''''''''''''
 
 
@@ -116,7 +116,7 @@ def timer(timer_signal: QtCore.pyqtSignal(str), alarm_signal: QtCore.pyqtSignal(
 
 
 class Entry(QtWidgets.QMainWindow, Ui_Entry):
-    global globalVars, win_register, win_random, win_white_board
+    global globalVars, win_register, win_random, win_paint
     time_signal = QtCore.pyqtSignal(str)
     alarm_signal = QtCore.pyqtSignal(str)
     progress_signal = QtCore.pyqtSignal(int)
@@ -146,7 +146,7 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
         self.progress_signal.connect(self.update_progress)
 
     def init(self):
-        self.comboBox.addItems(("教室", "公司"))
+        self.comboBox.addItems(("教室", "办公", "会议"))
 
         # start my timer
         thread = threading.Thread(target=timer, args=(self.time_signal, self.alarm_signal, self.progress_signal))
@@ -190,6 +190,12 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
 
     def select_scene(self, index):
         print("scene:", index)
+        if index == 0:
+            self.retranslateUi(self)
+        elif index == 1:
+            pass
+        else:
+            print("该功能还未实现，敬请期待．")
 
     def face_register(self):
         win_register.show()
@@ -201,7 +207,7 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
         self.plot.exec()
 
     def whiteBoard(self):
-        win_white_board.show()
+        win_paint.show()
 
     def system_monitor(self):
         pass
@@ -231,14 +237,14 @@ def timer2(timer_signal: QtCore.pyqtSignal(str)):
 class Register(QtWidgets.QMainWindow, Ui_Register):
     global globalVars
     time_signal = QtCore.pyqtSignal(str)
-    detect_signal = QtCore.pyqtSignal((np.ndarray, list))
+    detect_signal = QtCore.pyqtSignal(np.ndarray, list)
 
     def __init__(self):
         super(Register, self).__init__()
         self.setupUi(self)
         self.newCol = True
         self.directory = ''
-        self.ready = False
+        self.running = False
 
         self.student_list = []
         self.student_features = []
@@ -263,7 +269,6 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
         # print(fileType)
         self.directory = QtWidgets.QFileDialog.getExistingDirectory(self, "getExistingDirectory", "./")
         print(self.directory)
-        self.ready = False
         if self.directory == '':
             return
         print(os.listdir(self.directory))
@@ -280,14 +285,11 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
             else:
                 print(f"{stu}'s feature not exists.")
                 return
-        self.ready = True
         print(self.student_list)
         print(self.student_features)
         if self.newCol:
             self.df[self.date] = [False] * len(self.student_list)
             print(self.df)
-        #### TODO
-        self.df.to_excel(excel_writer='test.xlsx', header=True, index=False)
         self.finish_loading_callback()
 
     def add_new_column(self):
@@ -304,17 +306,32 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
     def finish_loading_callback(self):
         self.output.setText("Loading finished.")
         self.detector = FaceRecognition(self.student_list, self.student_features, self.detect_signal)
-        self.detector.detect(self.detect_signal)
 
     def detect_callback(self, img, names):
         shrink = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.QtImg = QImage(shrink.data, shrink.shape[1], shrink.shape[0], QImage.Format_RGB888)
         self.image.setPixmap(QPixmap.fromImage(self.QtImg))
         for name in names:
-            if name != 'unknown':
+            if name == 'Unknown':
                 continue
             idx = self.student_list.index(name)
-            print(idx)
+            print("idx: ", idx)
+            flag = not self.df.loc[idx, self.date]
+            print(flag)
+            self.df.loc[idx, self.date] = True
+            if flag:
+                self.df.to_excel(excel_writer=self.directory + '/test.xlsx', header=True, index=False)
+                print('write')
+
+    def startstop(self):
+        if self.running:
+            self.df.to_excel(excel_writer=self.directory + '/test.xlsx', header=True, index=False)
+            self.btn_startstop.setText("结束")
+            self.detector.start(self.detect_signal)
+        else:
+            self.btn_startstop.setText("开始")
+            self.detector.stop()
+        self.running = not self.running
 
 
 class Random(QtWidgets.QMainWindow, Ui_Random):
@@ -331,7 +348,7 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     win_entry = Entry()
     win_register = Register()
-    win_white_board = WhiteBoard()
     win_random = Random()
+    win_paint = Paint()
     win_entry.show()
     sys.exit(app.exec_())

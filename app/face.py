@@ -2,23 +2,41 @@ import face_recognition
 import cv2
 import threading
 import time
+import ctypes
+import inspect
+
+def _async_raise(tid, exctype):
+    """raises the exception, performs cleanup if needed"""
+    tid = ctypes.c_long(tid)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+
+
+def stop_thread(thread):
+    _async_raise(thread.ident, SystemExit)
 
 
 class FaceRecognition:
     def __init__(self, names: list, features: list, callback):
         self.names = names
         self.features = features
-        self.video_capture = cv2.VideoCapture(0)
-        self.thread = threading.Thread(target=self.detect, args=(callback,))
-        self.thread.setDaemon(True)
-        self.thread.start()
+        self.thread = None
+        self.start(callback)
 
     def detect(self, callback):
         face_locations = []
         face_encodings = []
         face_names = []
         process_this_frame = True
-        print(self.features)
+        # print(self.features)
 
         while True:
             # 读取摄像头画面
@@ -44,12 +62,12 @@ class FaceRecognition:
                     # 默认为unknown
                     matches = face_recognition.compare_faces(face_encoding, self.features, tolerance=0.39)
                     name = "Unknown"
-                    print(self.names)
-                    print(matches)
+                    # print(self.names)
+                    # print(matches)
 
                     if True in matches:
                         first_match_index = matches.index(True)
-                        print(first_match_index)
+                        # print(first_match_index)
                         name = self.names[first_match_index]
                     face_names.append(name)
 
@@ -70,10 +88,24 @@ class FaceRecognition:
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-                print(name)
+                # print(name)
 
             callback.emit(frame, face_names)
             time.sleep(1)
+
+    def start(self, callback):
+        self.video_capture = cv2.VideoCapture(0)
+        if self.thread is not None:
+            self.stop()
+        self.thread = threading.Thread(target=self.detect, args=(callback,))
+        self.thread.setDaemon(True)
+        self.thread.start()
+
+    def stop(self):
+        stop_thread(self.thread)
+        self.thread = None
+        self.video_capture.release()
+        self.video_capture = None
 
     def __del__(self):
         self.video_capture.release()

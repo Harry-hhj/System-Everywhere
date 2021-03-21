@@ -274,6 +274,25 @@
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QPushButton" name="btn_startstop">
+            <property name="minimumSize">
+             <size>
+              <width>60</width>
+              <height>31</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>31</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>结束</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
@@ -408,10 +427,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_startstop</sender>
+   <signal>clicked()</signal>
+   <receiver>Register</receiver>
+   <slot>startstop()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>650</x>
+     <y>606</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>600</x>
+     <y>624</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>load()</slot>
   <slot>add_new_column()</slot>
   <slot>set_minutes_seconds()</slot>
+  <slot>startstop()</slot>
  </slots>
 </ui>

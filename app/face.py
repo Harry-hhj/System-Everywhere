@@ -5,6 +5,7 @@ import time
 import ctypes
 import inspect
 
+
 def _async_raise(tid, exctype):
     """raises the exception, performs cleanup if needed"""
     tid = ctypes.c_long(tid)
@@ -108,4 +109,8 @@ class FaceRecognition:
         self.video_capture = None
 
     def __del__(self):
-        self.video_capture.release()
+        try:
+            self.video_capture.release()
+            stop_thread(self.thread)
+        except Exception as e:
+            print(e)

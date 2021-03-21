@@ -234,10 +234,16 @@ def timer2(timer_signal: QtCore.pyqtSignal(str)):
             timer_signal.emit(TimeStamp2Time(t))
 
 
+def timeout(t: float, signal: QtCore.pyqtSignal()):
+    time.sleep(t)
+    signal.emit()
+
+
 class Register(QtWidgets.QMainWindow, Ui_Register):
     global globalVars
     time_signal = QtCore.pyqtSignal(str)
     detect_signal = QtCore.pyqtSignal(np.ndarray, list)
+    timeout_signal = QtCore.pyqtSignal()
 
     def __init__(self):
         super(Register, self).__init__()
@@ -249,10 +255,13 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
         self.student_list = []
         self.student_features = []
 
+        self.logs = []
+
         self.init()
 
         self.time_signal.connect(self.update_time)
         self.detect_signal.connect(self.detect_callback)
+        self.timeout_signal.connect(self.timeout_callback)
 
     def init(self):
         self.new_line.setChecked(True)
@@ -298,14 +307,24 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
             print("newCol: ", self.newCol)
 
     def set_minutes_seconds(self):
-        pass
+        minutes = self.spinBox_min.value()
+        seconds = self.spinBox_s.value()
+        self.output.setText(f"签到开始，时长{minutes}:{seconds}.")
+        thread = threading.Thread(target=timeout, args=(minutes * 60 + seconds, self.timeout_signal))
+        thread.daemon = True
+        thread.start()
+
+    def timeout_callback(self):
+        self.startstop()
+        self.output.setText("签到时间结束！已保存")
 
     def update_time(self, string):
         self.time.setText(string)
 
     def finish_loading_callback(self):
-        self.output.setText("Loading finished.")
+        self.feedback.setText("Loading finished.")
         self.detector = FaceRecognition(self.student_list, self.student_features, self.detect_signal)
+        self.output.setText("签到开始.")
 
     def detect_callback(self, img, names):
         shrink = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -321,7 +340,13 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
             self.df.loc[idx, self.date] = True
             if flag:
                 self.df.to_excel(excel_writer=self.directory + '/test.xlsx', header=True, index=False)
-                print('write')
+                self.logManager(f'{name} 签到成功！')
+
+    def logManager(self, string):
+        if len(self.logs) > 15:
+            self.logs.pop(0)
+        self.logs.append(string)
+        self.log.setText('\n'.join(self.logs)+'\n\n\n未签到人数：　'+str(len(self.student_list)-len(self.logs))+'人')
 
     def startstop(self):
         if self.running:

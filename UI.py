@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QPalette, QBrush
 
 from src.entry import Ui_Entry
 from src.random import Ui_Random
@@ -127,10 +127,14 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
         self.init()
 
         # set front style
+        palette = QPalette()
+        palette.setBrush(QPalette.Background, QBrush(QPixmap("src/background.jpeg")))
+        self.setPalette(palette)
         self.logo.setStyleSheet(
             '''
                 border:none;
                 color:yellowgreen;
+                font-weight: bold;
             ''')
         self.time.setStyleSheet(
             '''
@@ -138,8 +142,172 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
                 font-size:16px;
                 font-weight:700;
                 font-family: "Helvetica Neue", Helvetica, Arial;
-                color:purple;
+                color:cyan;
             ''')
+        self.scrollArea.setStyleSheet(
+            '''
+                background-color:transparent;
+            '''
+        )
+        self.btn1.setStyleSheet(
+            '''
+                QPushButton{
+                    font-size: 16px;
+                    border: none;
+                    border-radius:10px;
+                    background-color: white;
+                }
+                QPushButton:hover{
+                    color:black;
+                    font-weight:bold;
+                    border:1px solid #F3F3F5;
+                    border-radius:10px;
+                    background:LightGreen;
+                }
+            '''
+        )
+        self.btn2.setStyleSheet(
+            '''
+                QPushButton{
+                    font-size: 16px;
+                    border: none;
+                    border-radius:10px;
+                    background-color: white;
+                }
+                QPushButton:hover{
+                    color:black;
+                    font-weight:bold;
+                    border:1px solid #F3F3F5;
+                    border-radius:10px;
+                    background:LightGreen;
+                }
+            '''
+        )
+        self.btn3.setStyleSheet(
+            '''
+                QPushButton{
+                    font-size: 16px;
+                    border: none;
+                    border-radius:10px;
+                    background-color: white;
+                }
+                QPushButton:hover{
+                    color:black;
+                    font-weight:bold;
+                    border:1px solid #F3F3F5;
+                    border-radius:10px;
+                    background:LightGreen;
+                }
+            '''
+        )
+        self.btn4.setStyleSheet(
+            '''
+                QPushButton{
+                    font-size: 16px;
+                    border: none;
+                    border-radius:10px;
+                    background-color: white;
+                }
+                QPushButton:hover{
+                    color:black;
+                    font-weight:bold;
+                    border:1px solid #F3F3F5;
+                    border-radius:10px;
+                    background:LightGreen;
+                }
+            '''
+        )
+        self.btn5.setStyleSheet(
+            '''
+                QPushButton{
+                    font-size: 16px;
+                    border: none;
+                    border-radius:10px;
+                    background-color: white;
+                }
+                QPushButton:hover{
+                    color:black;
+                    font-weight:bold;
+                    border:1px solid #F3F3F5;
+                    border-radius:10px;
+                    background:LightGreen;
+                }
+            '''
+        )
+        self.btn6.setStyleSheet(
+            '''
+                QPushButton{
+                    font-size: 16px;
+                    border: none;
+                    border-radius:10px;
+                    background-color: white;
+                }
+                QPushButton:hover{
+                    color:black;
+                    font-weight:bold;
+                    border:1px solid #F3F3F5;
+                    border-radius:10px;
+                    background:LightGreen;
+                }
+            '''
+        )
+        self.course_label.setStyleSheet(
+            '''
+                color: orange;
+            '''
+        )
+        self.course.setStyleSheet(
+            '''
+                color: yellow;
+                border:1px solid #ccc;
+            '''
+        )
+        self.schedule_label.setStyleSheet(
+            '''
+                color: orange;
+            '''
+        )
+        self.schedule.setStyleSheet(
+            '''
+                color: yellow;
+                border:1px solid #ccc;
+            '''
+        )
+        self.teacher_label.setStyleSheet(
+            '''
+                color: orange;
+            '''
+        )
+        self.teacher.setStyleSheet(
+            '''
+                color: yellow;
+                border:1px solid #ccc;
+            '''
+        )
+        self.feedback.setStyleSheet(
+            '''
+                color: coral;
+                border:1px solid coral;
+            '''
+        )
+        self.function_label.setStyleSheet(
+            '''
+                color:lightblue;
+            '''
+        )
+        self.comboBox.setStyleSheet(
+            '''
+                background:lightblue;
+            '''
+        )
+        self.btn_alarm.setStyleSheet(
+            '''
+                background:black;
+                color:white;
+            '''
+        )
+
+
 
         self.time_signal.connect(self.update_time)
         self.alarm_signal.connect(self.update_alarm)

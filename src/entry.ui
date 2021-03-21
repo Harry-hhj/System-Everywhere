@@ -343,9 +343,12 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>150</width>
+            <width>250</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
           </property>
          </widget>
         </item>
@@ -372,7 +375,7 @@
            <widget class="QPushButton" name="btn1">
             <property name="geometry">
              <rect>
-              <x>30</x>
+              <x>20</x>
               <y>20</y>
               <width>101</width>
               <height>61</height>
@@ -385,7 +388,7 @@
            <widget class="QPushButton" name="btn2">
             <property name="geometry">
              <rect>
-              <x>170</x>
+              <x>160</x>
               <y>20</y>
               <width>101</width>
               <height>61</height>
@@ -398,7 +401,7 @@
            <widget class="QPushButton" name="btn3">
             <property name="geometry">
              <rect>
-              <x>30</x>
+              <x>20</x>
               <y>100</y>
               <width>101</width>
               <height>61</height>
@@ -411,7 +414,7 @@
            <widget class="QPushButton" name="btn4">
             <property name="geometry">
              <rect>
-              <x>170</x>
+              <x>160</x>
               <y>100</y>
               <width>101</width>
               <height>61</height>
@@ -424,7 +427,7 @@
            <widget class="QPushButton" name="btn5">
             <property name="geometry">
              <rect>
-              <x>30</x>
+              <x>20</x>
               <y>180</y>
               <width>101</width>
               <height>61</height>
@@ -437,7 +440,7 @@
            <widget class="QPushButton" name="btn6">
             <property name="geometry">
              <rect>
-              <x>170</x>
+              <x>160</x>
               <y>180</y>
               <width>101</width>
               <height>61</height>

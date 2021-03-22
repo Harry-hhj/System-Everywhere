@@ -269,5 +269,93 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btn_start</sender>
+   <signal>clicked()</signal>
+   <receiver>Random</receiver>
+   <slot>start_call()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>293</x>
+     <y>38</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_import</sender>
+   <signal>clicked()</signal>
+   <receiver>Random</receiver>
+   <slot>import_list()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>154</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>35</x>
+     <y>331</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_come</sender>
+   <signal>clicked()</signal>
+   <receiver>Random</receiver>
+   <slot>yes()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>65</x>
+     <y>396</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>28</x>
+     <y>443</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ctn_notcome</sender>
+   <signal>clicked()</signal>
+   <receiver>Random</receiver>
+   <slot>no()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>411</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>105</x>
+     <y>437</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_others</sender>
+   <signal>clicked()</signal>
+   <receiver>Random</receiver>
+   <slot>others_yes()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>402</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>218</x>
+     <y>439</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>start_call()</slot>
+  <slot>import_list()</slot>
+  <slot>yes()</slot>
+  <slot>no()</slot>
+  <slot>others_yes()</slot>
+ </slots>
 </ui>

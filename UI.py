@@ -16,6 +16,8 @@ import scipy.io as scio
 import pandas as pd
 import numpy as np
 import cv2
+import random
+from xpinyin import Pinyin
 
 
 class GlobalVars(object):
@@ -306,6 +308,12 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
                 color:white;
             '''
         )
+        self.menubar.setStyleSheet(
+            '''
+                color:black;
+                background:white;
+            '''
+        )
 
 
 
@@ -534,7 +542,105 @@ class Random(QtWidgets.QMainWindow, Ui_Random):
         self.init()
 
     def init(self):
-        pass
+        self.spinBox.setValue(10)
+        self.count = 10
+        self.fileName = None
+        self.p = Pinyin()
+
+        self.logs = []
+        self.slm = QtCore.QStringListModel()  # 创建mode
+        self.slm.setStringList(self.logs)  # 将数据设置到model
+        self.listView.setModel(self.slm)  # 绑定 listView 和 model
+
+        self.date = time.strftime("%Y-%m-%d", time.localtime(time.time()))
+
+    def start_call(self):
+        self.count = self.spinBox.value()
+        if self.count <= 0:
+            return
+        self.names = []
+        while len(self.names) != self.count:
+            num = random.randint(0, len(self.student_list)-1)
+            if num in self.names:
+                continue
+            self.names.append(num)
+        self.name.setText(self.student_list[self.names[0]])
+        result = self.p.get_pinyin(self.student_list[self.names[0]], tone_marks='marks')
+        s = result.split('-')
+        result = s[0].capitalize() + ' ' + ''.join(s[1:]).capitalize()
+        self.pinyin.setText(result)
+        self.index = 0
+
+    def import_list(self):
+        self.fileName, fileType = QtWidgets.QFileDialog.getOpenFileName(self, "选取文件", os.getcwd(), "Excel File (*.xlsx);;Excel File (*.xls)")  # ;;Text Files(*.txt)
+        print(self.fileName)
+        print(fileType)
+        self.df: pd.DataFrame = pd.read_excel(self.fileName)
+        for row in self.df.iteritems():
+            self.student_list = list(row[1])
+            print(self.student_list)
+            break
+        self.df[self.date] = [None] * len(self.student_list)
+        print(self.df)
+        count = self.slm.rowCount()
+        self.slm.insertRow(count)
+        index = self.slm.index(count, 0)
+        self.slm.setData(index, f'导入成功!', QtCore.Qt.DisplayRole)
+        self.df.to_excel(excel_writer=self.fileName, header=True, index=False)
+
+    def yes(self):
+        self.df.loc[self.names[self.index], self.date] = True
+        count = self.slm.rowCount()
+        self.slm.insertRow(count)
+        index = self.slm.index(count, 0)
+        self.slm.setData(index, f'{self.student_list[self.names[self.index]]} 签到成功!', QtCore.Qt.DisplayRole)
+        self.index += 1
+        if self.index == self.count:
+            count = self.slm.rowCount()
+            self.slm.insertRow(count)
+            index = self.slm.index(count, 0)
+            self.slm.setData(index, '本次随机点名完成!', QtCore.Qt.DisplayRole)
+            self.df.to_excel(excel_writer=self.fileName, header=True, index=False)
+            self.name.clear()
+            self.pinyin.clear()
+            return
+        self.name.setText(self.student_list[self.names[self.index]])
+        result = self.p.get_pinyin(self.student_list[self.names[self.index]], tone_marks='marks')
+        s = result.split('-')
+        result = s[0].capitalize() + ' ' + ''.join(s[1:]).capitalize()
+        self.pinyin.setText(result)
+
+    def no(self):
+        self.df.loc[self.names[self.index], self.date] = False
+        count = self.slm.rowCount()
+        self.slm.insertRow(count)
+        index = self.slm.index(count, 0)
+        self.slm.setData(index, f'{self.student_list[self.names[self.index]]} 签到失败!', QtCore.Qt.DisplayRole)
+        self.index += 1
+        if self.index == self.count:
+            count = self.slm.rowCount()
+            self.slm.insertRow(count)
+            index = self.slm.index(count, 0)
+            self.slm.setData(index, '本次随机点名完成!', QtCore.Qt.DisplayRole)
+            self.df.to_excel(excel_writer=self.fileName, header=True, index=False)
+            self.name.clear()
+            self.pinyin.clear()
+            return
+        self.name.setText(self.student_list[self.names[self.index]])
+        result = self.p.get_pinyin(self.student_list[self.names[self.index]], tone_marks='marks')
+        s = result.split('-')
+        result = s[0].capitalize() + ' ' + ''.join(s[1:]).capitalize()
+        self.pinyin.setText(result)
+
+    def others_yes(self):
+        for i in range(0, len(self.df)):
+            if self.df.loc[i, self.date] is None:
+                self.df.loc[i, self.date] = True
+        count = self.slm.rowCount()
+        self.slm.insertRow(count)
+        index = self.slm.index(count, 0)
+        self.slm.setData(index, '所有学生签到完成!', QtCore.Qt.DisplayRole)
+        self.df.to_excel(excel_writer=self.fileName, header=True, index=False)
 
 
 if __name__ == "__main__":

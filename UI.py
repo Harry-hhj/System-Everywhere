@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QImage, QPixmap, QPalette, QBrush
 
 from src.entry import Ui_Entry
@@ -9,8 +9,6 @@ from app.face import FaceRecognition
 from app.browser_tabbed.browser_tabbed import Browser
 from app.paint.paint import Paint
 from app.calculator.calculator import Calculator
-from app.mediaplayer.mediaplayer import MediaPlayer
-from app.minesweeper.minesweeper import MineSweeper
 from app.notes.notes import Notes, Note, session
 from app.wordprocessor.wordprocessor import WordProcessor
 
@@ -33,6 +31,7 @@ class GlobalVars(object):
         self.init_time = time.time()
         self.alarm = False
         self.debug = True
+        self.scene = 0  # TODO
 
 
 globalVars = GlobalVars()
@@ -58,6 +57,7 @@ def timer(timer_signal: QtCore.pyqtSignal(str), alarm_signal: QtCore.pyqtSignal(
     global globalVars
     t_ = time.time()
     progress: int = 0
+    sign = [False] * 7
     while True:
         t = time.time()
         if t - t_ >= 1:
@@ -66,7 +66,6 @@ def timer(timer_signal: QtCore.pyqtSignal(str), alarm_signal: QtCore.pyqtSignal(
         else:
             time.sleep(0.5)
         delta_t = t - globalVars.init_time
-        sign = [False] * 7
         if globalVars.alarm:
             if globalVars.debug:
                 if not sign[0]:
@@ -98,6 +97,7 @@ def timer(timer_signal: QtCore.pyqtSignal(str), alarm_signal: QtCore.pyqtSignal(
             else:
                 if not sign[0]:
                     alarm_signal.emit("第一节课上课中")
+                    sign[0] = True
                 if delta_t > 35 * 60 * 60:
                     if delta_t > 45 * 60 * 60:
                         if delta_t > 55 * 60 * 60:
@@ -108,14 +108,19 @@ def timer(timer_signal: QtCore.pyqtSignal(str), alarm_signal: QtCore.pyqtSignal(
                                         sign[6] = True
                                     elif not sign[5]:
                                         alarm_signal.emit("距第二节下课还有5分钟,请您注意上课时间")
+                                        sign[5] = True
                                 elif not sign[4]:
                                     alarm_signal.emit("第二节课已过半,请您注意上课时间")
+                                    sign[4] = True
                             elif not sign[3]:
                                 alarm_signal.emit("第二节课上课中")
+                                sign[3] = True
                         elif not sign[2]:
                             alarm_signal.emit("课间休息中")
+                            sign[2] = True
                     elif not sign[1]:
                         alarm_signal.emit("距第一节下课还有10分钟,请您注意上课时间")
+                        sign[1] = True
         if globalVars.debug:
             new_progress = int(delta_t)
         else:
@@ -380,6 +385,10 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
             self.proc.terminate()
         except Exception as e:
             pass
+        try:
+            self.proc2.terminate()
+        except Exception as e:
+            pass
         sys.exit(0)
 
     def select_scene(self, index):
@@ -404,6 +413,11 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
             self.btn5.clicked.connect(self.system_monitor)
             self.btn6.clicked.connect(self.standby)
             self.btn_alarm.clicked.connect(self.alarm)
+            self.course.setMinimumSize(QtCore.QSize(131, 31))
+            self.schedule_label.setVisible(True)
+            self.schedule.setVisible(True)
+            self.teacher_label.setVisible(True)
+            self.teacher.setVisible(True)
         elif index == 1:
             _translate = QtCore.QCoreApplication.translate
             self.setWindowTitle(_translate("Entry", "MainWindow"))
@@ -422,7 +436,10 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
             self.btn4.setText(_translate("Entry", "便笺"))
             self.btn5.setText(_translate("Entry", "绘图"))
             self.btn6.setText(_translate("Entry", "扫雷"))
-            self.btn_alarm.setText(_translate("Entry", "打开时间提醒"))
+            if globalVars.alarm:
+                self.btn_alarm.setText(_translate("Entry", "关闭时间提醒"))
+            else:
+                self.btn_alarm.setText(_translate("Entry", "打开时间提醒"))
             self.menuFile.setTitle(_translate("Entry", "File"))
             self.actionImport.setText(_translate("Entry", "Import"))
             self.actionExit.setText(_translate("Entry", "Exit"))
@@ -521,8 +538,7 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
         self.proc = subprocess.Popen(['python', 'app/minesweeper/minesweeper.py'], shell=False)
 
     def media(self):
-        me = MediaPlayer()
-        me.show()
+        self.proc2 = subprocess.Popen(['python', 'app/mediaplayer/mediaplayer.py'], shell=False)
 
 
 def timer2(timer_signal: QtCore.pyqtSignal(str)):

@@ -128,10 +128,25 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
         self.setupUi(self)
         self.init()
 
+        self.btn1.clicked.disconnect(self.face_register)
+        self.btn2.clicked.disconnect(self.random_register)
+        self.btn3.clicked.disconnect(self.myplot)
+        self.btn4.clicked.disconnect(self.whiteBoard)
+        self.btn5.clicked.disconnect(self.system_monitor)
+        self.btn6.clicked.disconnect(self.standby)
+        self.btn_alarm.clicked.disconnect(self.alarm)
+
         # set front style
         palette = QPalette()
         palette.setBrush(QPalette.Background, QBrush(QPixmap("src/background.jpeg")))
+        self.comboBox.addItems(("教室", "办公", "会议"))
         self.setPalette(palette)
+
+        self.time_signal.connect(self.update_time)
+        self.alarm_signal.connect(self.update_alarm)
+        self.progress_signal.connect(self.update_progress)
+
+    def init(self):
         self.logo.setStyleSheet(
             '''
                 border:none;
@@ -315,15 +330,6 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
             '''
         )
 
-
-
-        self.time_signal.connect(self.update_time)
-        self.alarm_signal.connect(self.update_alarm)
-        self.progress_signal.connect(self.update_progress)
-
-    def init(self):
-        self.comboBox.addItems(("教室", "办公", "会议"))
-
         # start my timer
         thread = threading.Thread(target=timer, args=(self.time_signal, self.alarm_signal, self.progress_signal))
         thread.setDaemon(True)
@@ -368,8 +374,83 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
         print("scene:", index)
         if index == 0:
             self.retranslateUi(self)
+            self.init()
+            try:
+                self.btn1.clicked.disconnect(self.browser)
+                self.btn2.clicked.disconnect(self.calculate)
+                self.btn3.clicked.disconnect(self.note)
+                self.btn4.clicked.disconnect(self.painter)
+                self.btn5.clicked.disconnect(self.word)
+                self.btn6.clicked.disconnect(self.minesweep)
+                self.btn_alarm.clicked.disconnect(self.media)
+            except Exception as e:
+                print(e)
+            self.btn1.clicked.connect(self.face_register)
+            self.btn2.clicked.connect(self.random_register)
+            self.btn3.clicked.connect(self.myplot)
+            self.btn4.clicked.connect(self.whiteBoard)
+            self.btn5.clicked.connect(self.system_monitor)
+            self.btn6.clicked.connect(self.standby)
+            self.btn_alarm.clicked.connect(self.alarm)
         elif index == 1:
-            pass
+            _translate = QtCore.QCoreApplication.translate
+            self.setWindowTitle(_translate("Entry", "MainWindow"))
+            self.logo.setText(_translate("Entry", "System  Everywhere"))
+            self.course_label.setText(_translate("Entry", "Course"))
+            self.course.setText(_translate("Entry", "course"))
+            self.schedule_label.setText(_translate("Entry", "Schedule"))
+            self.schedule.setText(_translate("Entry", "schedule"))
+            self.teacher_label.setText(_translate("Entry", "Teacher"))
+            self.teacher.setText(_translate("Entry", "teacher"))
+            self.feedback.setText(_translate("Entry", "TextLabel"))
+            self.function_label.setText(_translate("Entry", "Function"))
+            self.btn1.setText(_translate("Entry", "浏览器"))
+            self.btn2.setText(_translate("Entry", "计算器"))
+            self.btn3.setText(_translate("Entry", "文本编辑"))
+            self.btn4.setText(_translate("Entry", "便笺"))
+            self.btn5.setText(_translate("Entry", "绘图"))
+            self.btn6.setText(_translate("Entry", "扫雷"))
+            self.btn_alarm.setText(_translate("Entry", "打开时间提醒"))
+            self.menuFile.setTitle(_translate("Entry", "File"))
+            self.actionImport.setText(_translate("Entry", "Import"))
+            self.actionExit.setText(_translate("Entry", "Exit"))
+            self.actionHelp.setText(_translate("Entry", "Help"))
+            self.btn6.setVisible(True)
+            self.feedback.clear()
+            self.feedback.setText("该准备收拾行李了!")
+            self.btn_alarm.setText("音乐播放器")
+            self.schedule_label.setVisible(False)
+            self.schedule.setVisible(False)
+            self.teacher_label.setVisible(False)
+            self.teacher.setVisible(False)
+            self.course.setMinimumSize(QtCore.QSize(281, 300))
+            self.course_label.setText("提醒事项")
+            self.course.setText("明天8:00起床\n下午3:55的航班\n晚上公司年会")
+            self.course.setStyleSheet(
+                '''
+                    color: yellow;
+                    border:4px solid #ccc;
+                    background:coral;
+                '''
+            )
+            try:
+                self.btn1.clicked.disconnect(self.face_register)
+                self.btn2.clicked.disconnect(self.random_register)
+                self.btn3.clicked.disconnect(self.myplot)
+                self.btn4.clicked.disconnect(self.whiteBoard)
+                self.btn5.clicked.disconnect(self.system_monitor)
+                self.btn6.clicked.disconnect(self.standby)
+                self.btn_alarm.clicked.disconnect(self.alarm)
+            except Exception as e:
+                print(e)
+            self.btn1.clicked.connect(self.browser)
+            self.btn2.clicked.connect(self.calculate)
+            self.btn3.clicked.connect(self.note)
+            self.btn4.clicked.connect(self.painter)
+            self.btn5.clicked.connect(self.word)
+            self.btn6.clicked.connect(self.minesweep)
+            self.btn_alarm.clicked.connect(self.media)
+            QtCore.QMetaObject.connectSlotsByName(self)
         else:
             print("该功能还未实现，敬请期待．")
 
@@ -399,6 +480,28 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
             self.btn_alarm.setText("关闭时间提醒")
         else:
             self.btn_alarm.setText("打开时间提醒")
+
+    def browser(self):
+        print(1111111111111)
+        pass
+
+    def calculate(self):
+        pass
+
+    def note(self):
+        pass
+
+    def painter(self):
+        pass
+
+    def word(self):
+        pass
+
+    def minesweep(self):
+        pass
+
+    def media(self):
+        pass
 
 
 def timer2(timer_signal: QtCore.pyqtSignal(str)):
@@ -522,7 +625,7 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
         if len(self.logs) > 15:
             self.logs.pop(0)
         self.logs.append(string)
-        self.log.setText('\n'.join(self.logs)+'\n\n\n未签到人数：　'+str(len(self.student_list)-len(self.logs))+'人')
+        self.log.setText('\n'.join(self.logs) + '\n\n\n未签到人数：　' + str(len(self.student_list) - len(self.logs)) + '人')
 
     def startstop(self):
         if self.running:
@@ -560,7 +663,7 @@ class Random(QtWidgets.QMainWindow, Ui_Random):
             return
         self.names = []
         while len(self.names) != self.count:
-            num = random.randint(0, len(self.student_list)-1)
+            num = random.randint(0, len(self.student_list) - 1)
             if num in self.names:
                 continue
             self.names.append(num)
@@ -572,7 +675,8 @@ class Random(QtWidgets.QMainWindow, Ui_Random):
         self.index = 0
 
     def import_list(self):
-        self.fileName, fileType = QtWidgets.QFileDialog.getOpenFileName(self, "选取文件", os.getcwd(), "Excel File (*.xlsx);;Excel File (*.xls)")  # ;;Text Files(*.txt)
+        self.fileName, fileType = QtWidgets.QFileDialog.getOpenFileName(self, "选取文件", os.getcwd(),
+                                                                        "Excel File (*.xlsx);;Excel File (*.xls)")  # ;;Text Files(*.txt)
         print(self.fileName)
         print(fileType)
         self.df: pd.DataFrame = pd.read_excel(self.fileName)

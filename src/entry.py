@@ -245,7 +245,7 @@ class Ui_Entry(object):
         self.btn5.setText(_translate("Entry", "控制面板"))
         self.btn6.setText(_translate("Entry", "备用"))
         self.btn_alarm.setText(_translate("Entry", "打开时间提醒"))
-        self.time.setText(_translate("Entry", "2021-01-01 13:59"))
+        # self.time.setText(_translate("Entry", "2021-01-01 13:59"))
         self.menuFile.setTitle(_translate("Entry", "File"))
         self.actionImport.setText(_translate("Entry", "Import"))
         self.actionExit.setText(_translate("Entry", "Exit"))

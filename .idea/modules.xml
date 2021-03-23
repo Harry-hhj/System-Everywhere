@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ClassroomSystem.iml" filepath="$PROJECT_DIR$/.idea/ClassroomSystem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SystemEverywhere.iml" filepath="$PROJECT_DIR$/.idea/SystemEverywhere.iml" />
     </modules>
   </component>
 </project>

@@ -526,8 +526,7 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
                 Notes(obj=note)
 
     def painter(self):
-        pa = Paint()
-        pa.show()
+        win_paint.show()
 
     def word(self):
         wo = WordProcessor()
@@ -708,6 +707,7 @@ class Random(QtWidgets.QMainWindow, Ui_Random):
         self.p = Pinyin()
 
         self.logs = []
+        self.student_list = []
         self.slm = QtCore.QStringListModel()  # 创建mode
         self.slm.setStringList(self.logs)  # 将数据设置到model
         self.listView.setModel(self.slm)  # 绑定 listView 和 model

@@ -39,9 +39,12 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.closeButton.setFont(font)
         self.closeButton.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.closeButton.setStyleSheet("QPushButton {\n"
-"    border: 0px;\n"
-"}")
+        self.closeButton.setStyleSheet(
+            '''
+                QPushButton {
+                    border: 0px;
+                }
+            ''')
         self.closeButton.setObjectName("closeButton")
         self.horizontalLayout.addWidget(self.closeButton)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)

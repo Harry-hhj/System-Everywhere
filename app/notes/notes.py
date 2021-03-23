@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtMultimedia import *
 from PyQt5.QtMultimediaWidgets import *
 
-from MainWindow import Ui_MainWindow
+from .MainWindow import Ui_MainWindow
 
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -32,13 +32,23 @@ session = Session()
 _ACTIVE_NOTES = {}
 
 def create_new_note():
-    MainWindow()
+    Notes()
 
-class MainWindow(QMainWindow, Ui_MainWindow):
+class Notes(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+        super(Notes, self).__init__(*args, **kwargs)
         self.setupUi(self)
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+
+        palette = QPalette()
+        palette.setColor(QPalette.Window, QColor(188, 170, 164))
+        palette.setColor(QPalette.WindowText, QColor(121, 85, 72))
+        palette.setColor(QPalette.ButtonText, QColor(121, 85, 72))
+        palette.setColor(QPalette.Text, QColor(121, 85, 72))
+        palette.setColor(QPalette.Base, QColor(188, 170, 164))
+        palette.setColor(QPalette.AlternateBase, QColor(188, 170, 164))
+        self.setPalette(palette)
+
         self.show()
 
         # Load/save note data, store this notes db reference.
@@ -109,13 +119,9 @@ if __name__ == '__main__':
 
     existing_notes = session.query(Note).all()
     if len(existing_notes) == 0:
-        MainWindow()
+        Notes()
     else:
         for note in existing_notes:
-            MainWindow(obj=note)
-
-
-
-
+            Notes(obj=note)
 
     app.exec_()

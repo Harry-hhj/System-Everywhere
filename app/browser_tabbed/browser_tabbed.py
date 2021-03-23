@@ -7,6 +7,8 @@ from PyQt5.QtPrintSupport import *
 import os
 import sys
 
+current = os.path.dirname(__file__)
+
 
 class AboutDialog(QDialog):
     def __init__(self, *args, **kwargs):
@@ -27,7 +29,8 @@ class AboutDialog(QDialog):
         layout.addWidget(title)
 
         logo = QLabel()
-        logo.setPixmap(QPixmap(os.path.join('images', 'ma-icon-128.png')))
+        print(os.path.join(current, 'images', 'ma-icon-128.png'))
+        logo.setPixmap(QPixmap(os.path.join(current, 'images', 'ma-icon-128.png')))
         layout.addWidget(logo)
 
         layout.addWidget(QLabel("Version 23.35.211.233232"))
@@ -41,9 +44,9 @@ class AboutDialog(QDialog):
         self.setLayout(layout)
 
 
-class MainWindow(QMainWindow):
+class Browser(QMainWindow):
     def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+        super(Browser, self).__init__(*args, **kwargs)
 
         self.tabs = QTabWidget()
         self.tabs.setDocumentMode(True)
@@ -61,22 +64,23 @@ class MainWindow(QMainWindow):
         navtb.setIconSize(QSize(16, 16))
         self.addToolBar(navtb)
 
-        back_btn = QAction(QIcon(os.path.join('images', 'arrow-180.png')), "Back", self)
+        print(os.path.join(current, 'images', 'arrow-180.png'))
+        back_btn = QAction(QIcon(os.path.join(current, 'images', 'arrow-180.png')), "Back", self)
         back_btn.setStatusTip("Back to previous page")
         back_btn.triggered.connect(lambda: self.tabs.currentWidget().back())
         navtb.addAction(back_btn)
 
-        next_btn = QAction(QIcon(os.path.join('images', 'arrow-000.png')), "Forward", self)
+        next_btn = QAction(QIcon(os.path.join(current, 'images', 'arrow-000.png')), "Forward", self)
         next_btn.setStatusTip("Forward to next page")
         next_btn.triggered.connect(lambda: self.tabs.currentWidget().forward())
         navtb.addAction(next_btn)
 
-        reload_btn = QAction(QIcon(os.path.join('images', 'arrow-circle-315.png')), "Reload", self)
+        reload_btn = QAction(QIcon(os.path.join(current, 'images', 'arrow-circle-315.png')), "Reload", self)
         reload_btn.setStatusTip("Reload page")
         reload_btn.triggered.connect(lambda: self.tabs.currentWidget().reload())
         navtb.addAction(reload_btn)
 
-        home_btn = QAction(QIcon(os.path.join('images', 'home.png')), "Home", self)
+        home_btn = QAction(QIcon(os.path.join(current, 'images', 'home.png')), "Home", self)
         home_btn.setStatusTip("Go home")
         home_btn.triggered.connect(self.navigate_home)
         navtb.addAction(home_btn)
@@ -84,14 +88,14 @@ class MainWindow(QMainWindow):
         navtb.addSeparator()
 
         self.httpsicon = QLabel()  # Yes, really!
-        self.httpsicon.setPixmap(QPixmap(os.path.join('images', 'lock-nossl.png')))
+        self.httpsicon.setPixmap(QPixmap(os.path.join(current, 'images', 'lock-nossl.png')))
         navtb.addWidget(self.httpsicon)
 
         self.urlbar = QLineEdit()
         self.urlbar.returnPressed.connect(self.navigate_to_url)
         navtb.addWidget(self.urlbar)
 
-        stop_btn = QAction(QIcon(os.path.join('images', 'cross-circle.png')), "Stop", self)
+        stop_btn = QAction(QIcon(os.path.join(current, 'images', 'cross-circle.png')), "Stop", self)
         stop_btn.setStatusTip("Stop loading current page")
         stop_btn.triggered.connect(lambda: self.tabs.currentWidget().stop())
         navtb.addAction(stop_btn)
@@ -101,45 +105,45 @@ class MainWindow(QMainWindow):
 
         file_menu = self.menuBar().addMenu("&File")
 
-        new_tab_action = QAction(QIcon(os.path.join('images', 'ui-tab--plus.png')), "New Tab", self)
+        new_tab_action = QAction(QIcon(os.path.join(current, 'images', 'ui-tab--plus.png')), "New Tab", self)
         new_tab_action.setStatusTip("Open a new tab")
         new_tab_action.triggered.connect(lambda _: self.add_new_tab())
         file_menu.addAction(new_tab_action)
 
-        open_file_action = QAction(QIcon(os.path.join('images', 'disk--arrow.png')), "Open file...", self)
+        open_file_action = QAction(QIcon(os.path.join(current, 'images', 'disk--arrow.png')), "Open file...", self)
         open_file_action.setStatusTip("Open from file")
         open_file_action.triggered.connect(self.open_file)
         file_menu.addAction(open_file_action)
 
-        save_file_action = QAction(QIcon(os.path.join('images', 'disk--pencil.png')), "Save Page As...", self)
+        save_file_action = QAction(QIcon(os.path.join(current, 'images', 'disk--pencil.png')), "Save Page As...", self)
         save_file_action.setStatusTip("Save current page to file")
         save_file_action.triggered.connect(self.save_file)
         file_menu.addAction(save_file_action)
 
-        print_action = QAction(QIcon(os.path.join('images', 'printer.png')), "Print...", self)
+        print_action = QAction(QIcon(os.path.join(current, 'images', 'printer.png')), "Print...", self)
         print_action.setStatusTip("Print current page")
         print_action.triggered.connect(self.print_page)
         file_menu.addAction(print_action)
 
         help_menu = self.menuBar().addMenu("&Help")
 
-        about_action = QAction(QIcon(os.path.join('images', 'question.png')), "About Mozarella Ashbadger", self)
+        about_action = QAction(QIcon(os.path.join(current, 'images', 'question.png')), "About Mozarella Ashbadger", self)
         about_action.setStatusTip("Find out more about Mozarella Ashbadger")  # Hungry!
         about_action.triggered.connect(self.about)
         help_menu.addAction(about_action)
 
-        navigate_mozarella_action = QAction(QIcon(os.path.join('images', 'lifebuoy.png')),
+        navigate_mozarella_action = QAction(QIcon(os.path.join(current, 'images', 'lifebuoy.png')),
                                             "Mozarella Ashbadger Homepage", self)
         navigate_mozarella_action.setStatusTip("Go to Mozarella Ashbadger Homepage")
         navigate_mozarella_action.triggered.connect(self.navigate_mozarella)
         help_menu.addAction(navigate_mozarella_action)
 
-        self.add_new_tab(QUrl('http://www.google.com'), 'Homepage')
+        self.add_new_tab(QUrl('https://www.baidu.com'), 'Homepage')
 
-        self.show()
+        # self.show()
 
         self.setWindowTitle("Mozarella Ashbadger")
-        self.setWindowIcon(QIcon(os.path.join('images', 'ma-icon-64.png')))
+        self.setWindowIcon(QIcon(os.path.join(current, 'images', 'ma-icon-64.png')))
 
     def add_new_tab(self, qurl=None, label="Blank"):
 
@@ -235,21 +239,21 @@ class MainWindow(QMainWindow):
 
         if q.scheme() == 'https':
             # Secure padlock icon
-            self.httpsicon.setPixmap(QPixmap(os.path.join('images', 'lock-ssl.png')))
+            self.httpsicon.setPixmap(QPixmap(os.path.join(current, 'images', 'lock-ssl.png')))
 
         else:
             # Insecure padlock icon
-            self.httpsicon.setPixmap(QPixmap(os.path.join('images', 'lock-nossl.png')))
+            self.httpsicon.setPixmap(QPixmap(os.path.join(current, 'images', 'lock-nossl.png')))
 
         self.urlbar.setText(q.toString())
         self.urlbar.setCursorPosition(0)
 
 
-app = QApplication(sys.argv)
-app.setApplicationName("Mozarella Ashbadger")
-app.setOrganizationName("Mozarella")
-app.setOrganizationDomain("mozarella.org")
-
-window = MainWindow()
-
-app.exec_()
+# app = QApplication(sys.argv)
+# app.setApplicationName("Mozarella Ashbadger")
+# app.setOrganizationName("Mozarella")
+# app.setOrganizationDomain("mozarella.org")
+#
+# window = Browser()
+#
+# app.exec_()

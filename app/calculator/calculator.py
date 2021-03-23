@@ -4,16 +4,16 @@ from PyQt5.QtCore import *
 
 import operator
 
-from MainWindow import Ui_MainWindow
+from .MainWindow import Ui_MainWindow
 
 # Calculator state.
 READY = 0
 INPUT = 1
 
 
-class MainWindow(QMainWindow, Ui_MainWindow):
+class Calculator(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+        super(Calculator, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
         # Setup numbers.
@@ -40,8 +40,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.memory = 0
         self.reset()
-
-        self.show()
 
     def display(self):
         self.lcdNumber.display(self.stack[-1])
@@ -108,5 +106,5 @@ if __name__ == '__main__':
     app = QApplication([])
     app.setApplicationName("Calculon")
 
-    window = MainWindow()
+    window = Calculator()
     app.exec_()

@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QImage, QPixmap, QPalette, QBrush
 
 from src.entry import Ui_Entry
@@ -6,7 +6,14 @@ from src.random import Ui_Random
 from src.register import Ui_Register
 from src.myplot import Myplot
 from app.face import FaceRecognition
+from app.browser_tabbed.browser_tabbed import Browser
 from app.paint.paint import Paint
+from app.calculator.calculator import Calculator
+from app.mediaplayer.mediaplayer import MediaPlayer
+from app.minesweeper.minesweeper import MineSweeper
+from app.notes.notes import Notes, Note, session
+from app.wordprocessor.wordprocessor import WordProcessor
+
 
 import sys
 import os
@@ -18,6 +25,7 @@ import numpy as np
 import cv2
 import random
 from xpinyin import Pinyin
+import subprocess
 
 
 class GlobalVars(object):
@@ -368,6 +376,10 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
         :param event:
         :return:
         '''
+        try:
+            self.proc.terminate()
+        except Exception as e:
+            pass
         sys.exit(0)
 
     def select_scene(self, index):
@@ -378,9 +390,9 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
             try:
                 self.btn1.clicked.disconnect(self.browser)
                 self.btn2.clicked.disconnect(self.calculate)
-                self.btn3.clicked.disconnect(self.note)
-                self.btn4.clicked.disconnect(self.painter)
-                self.btn5.clicked.disconnect(self.word)
+                self.btn3.clicked.disconnect(self.word)
+                self.btn4.clicked.disconnect(self.note)
+                self.btn5.clicked.disconnect(self.painter)
                 self.btn6.clicked.disconnect(self.minesweep)
                 self.btn_alarm.clicked.disconnect(self.media)
             except Exception as e:
@@ -445,9 +457,9 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
                 print(e)
             self.btn1.clicked.connect(self.browser)
             self.btn2.clicked.connect(self.calculate)
-            self.btn3.clicked.connect(self.note)
-            self.btn4.clicked.connect(self.painter)
-            self.btn5.clicked.connect(self.word)
+            self.btn3.clicked.connect(self.word)
+            self.btn4.clicked.connect(self.note)
+            self.btn5.clicked.connect(self.painter)
             self.btn6.clicked.connect(self.minesweep)
             self.btn_alarm.clicked.connect(self.media)
             QtCore.QMetaObject.connectSlotsByName(self)
@@ -482,26 +494,35 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
             self.btn_alarm.setText("打开时间提醒")
 
     def browser(self):
-        print(1111111111111)
-        pass
+        bs = Browser()
+        bs.show()
 
     def calculate(self):
-        pass
+        ca = Calculator()
+        ca.show()
 
     def note(self):
-        pass
+        existing_notes = session.query(Note).all()
+        if len(existing_notes) == 0:
+            Notes()
+        else:
+            for note in existing_notes:
+                Notes(obj=note)
 
     def painter(self):
-        pass
+        pa = Paint()
+        pa.show()
 
     def word(self):
-        pass
+        wo = WordProcessor()
+        wo.show()
 
     def minesweep(self):
-        pass
+        self.proc = subprocess.Popen(['python', 'app/minesweeper/minesweeper.py'], shell=False)
 
     def media(self):
-        pass
+        me = MediaPlayer()
+        me.show()
 
 
 def timer2(timer_signal: QtCore.pyqtSignal(str)):

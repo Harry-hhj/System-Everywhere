@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtMultimedia import *
 from PyQt5.QtMultimediaWidgets import *
 
-from MainWindow import Ui_MainWindow
+from .MainWindow import Ui_MainWindow
 
 
 def hhmmss(ms):
@@ -39,9 +39,9 @@ class PlaylistModel(QAbstractListModel):
         return self.playlist.mediaCount()
 
 
-class MainWindow(QMainWindow, Ui_MainWindow):
+class MediaPlayer(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+        super(MediaPlayer, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
         self.player = QMediaPlayer()
@@ -87,8 +87,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.open_file_action.triggered.connect(self.open_file)
 
         self.setAcceptDrops(True)
-
-        self.show()
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls():
@@ -179,5 +177,5 @@ if __name__ == "__main__":
         "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }"
     )
 
-    window = MainWindow()
+    window = MediaPlayer()
     app.exec_()

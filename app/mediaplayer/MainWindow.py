@@ -8,8 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
-current = current_work_dir = os.path.dirname(__file__)
-print(current)
+current = os.path.dirname(__file__)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):

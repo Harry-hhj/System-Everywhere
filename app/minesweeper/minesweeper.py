@@ -4,11 +4,17 @@ from PyQt5.QtCore import *
 
 import random
 import time
+import os
+import sys
 
-IMG_BOMB = QImage("./images/bug.png")
-IMG_FLAG = QImage("./images/flag.png")
-IMG_START = QImage("./images/rocket.png")
-IMG_CLOCK = QImage("./images/clock-select.png")
+
+
+os.chdir(sys.path[0])
+
+IMG_BOMB = QImage(os.path.abspath("images/bug.png"))
+IMG_FLAG = QImage(os.path.abspath("/images/flag.png"))
+IMG_START = QImage(os.path.abspath("/images/rocket.png"))
+IMG_CLOCK = QImage(os.path.abspath("/images/clock-select.png"))
 
 NUM_COLORS = {
     1: QColor('#f44336'),
@@ -33,10 +39,10 @@ STATUS_FAILED = 2
 STATUS_SUCCESS = 3
 
 STATUS_ICONS = {
-    STATUS_READY: "./images/plus.png",
-    STATUS_PLAYING: "./images/smiley.png",
-    STATUS_FAILED: "./images/cross.png",
-    STATUS_SUCCESS: "./images/smiley-lol.png",
+    STATUS_READY: os.path.abspath("/images/plus.png"),
+    STATUS_PLAYING: os.path.abspath("/images/smiley.png"),
+    STATUS_FAILED: os.path.abspath("/images/cross.png"),
+    STATUS_SUCCESS: os.path.abspath("/images/smiley-lol.png"),
 }
 
 
@@ -129,9 +135,9 @@ class Pos(QWidget):
                 self.ohno.emit()
 
 
-class MainWindow(QMainWindow):
+class MineSweeper(QMainWindow):
     def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+        super(MineSweeper, self).__init__(*args, **kwargs)
 
         self.b_size, self.n_mines = LEVELS[1]
 
@@ -160,7 +166,7 @@ class MainWindow(QMainWindow):
         self.button = QPushButton()
         self.button.setFixedSize(QSize(32, 32))
         self.button.setIconSize(QSize(32, 32))
-        self.button.setIcon(QIcon("./images/smiley.png"))
+        self.button.setIcon(QIcon(os.path.abspath("images/smiley.png")))
         self.button.setFlat(True)
 
         self.button.pressed.connect(self.button_pressed)
@@ -194,6 +200,7 @@ class MainWindow(QMainWindow):
 
         self.reset_map()
         self.update_status(STATUS_READY)
+        print('----------------------')
 
         self.show()
 
@@ -305,5 +312,5 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication([])
-    window = MainWindow()
+    window = MineSweeper()
     app.exec_()

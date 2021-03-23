@@ -12,9 +12,9 @@ import sys
 os.chdir(sys.path[0])
 
 IMG_BOMB = QImage(os.path.abspath("images/bug.png"))
-IMG_FLAG = QImage(os.path.abspath("/images/flag.png"))
-IMG_START = QImage(os.path.abspath("/images/rocket.png"))
-IMG_CLOCK = QImage(os.path.abspath("/images/clock-select.png"))
+IMG_FLAG = QImage(os.path.abspath("images/flag.png"))
+IMG_START = QImage(os.path.abspath("images/rocket.png"))
+IMG_CLOCK = QImage(os.path.abspath("images/clock-select.png"))
 
 NUM_COLORS = {
     1: QColor('#f44336'),
@@ -39,10 +39,10 @@ STATUS_FAILED = 2
 STATUS_SUCCESS = 3
 
 STATUS_ICONS = {
-    STATUS_READY: os.path.abspath("/images/plus.png"),
-    STATUS_PLAYING: os.path.abspath("/images/smiley.png"),
-    STATUS_FAILED: os.path.abspath("/images/cross.png"),
-    STATUS_SUCCESS: os.path.abspath("/images/smiley-lol.png"),
+    STATUS_READY: os.path.abspath("images/plus.png"),
+    STATUS_PLAYING: os.path.abspath("images/smiley.png"),
+    STATUS_FAILED: os.path.abspath("images/cross.png"),
+    STATUS_SUCCESS: os.path.abspath("images/smiley-lol.png"),
 }
 
 
@@ -200,7 +200,6 @@ class MineSweeper(QMainWindow):
 
         self.reset_map()
         self.update_status(STATUS_READY)
-        print('----------------------')
 
         self.show()
 

@@ -41,7 +41,6 @@ UI_wrapper for Ui_Entry
 Function:
 1. timer -- show_time, time_warning, progress_bar
 2. scene -- classroom, workspace, meeting
-3. 
 '''''''''''''''''''''''''''''''''''''''
 
 
@@ -71,11 +70,11 @@ def timer(timer_signal: QtCore.pyqtSignal(str), alarm_signal: QtCore.pyqtSignal(
                 if not sign[0]:
                     alarm_signal.emit("第一节课上课中")
                     sign[0] = True
-                if delta_t > 35:
-                    if delta_t > 45:
-                        if delta_t > 55:
-                            if delta_t > 75:
-                                if delta_t > 90:
+                if delta_t > 35 and not sign[1]:
+                    if delta_t > 45 and not sign[2]:
+                        if delta_t > 55 and not sign[3]:
+                            if delta_t > 75 and not sign[4]:
+                                if delta_t > 90 and not sign[5]:
                                     if delta_t > 100 and not sign[6]:
                                         alarm_signal.emit("下课中...")
                                         sign[6] = True
@@ -98,11 +97,11 @@ def timer(timer_signal: QtCore.pyqtSignal(str), alarm_signal: QtCore.pyqtSignal(
                 if not sign[0]:
                     alarm_signal.emit("第一节课上课中")
                     sign[0] = True
-                if delta_t > 35 * 60 * 60:
-                    if delta_t > 45 * 60 * 60:
-                        if delta_t > 55 * 60 * 60:
-                            if delta_t > 75 * 60 * 60:
-                                if delta_t > 90 * 60 * 60:
+                if delta_t > 35 * 60 * 60 and not sign[1]:
+                    if delta_t > 45 * 60 * 60 and not sign[2]:
+                        if delta_t > 55 * 60 * 60 and not sign[3]:
+                            if delta_t > 75 * 60 * 60 and not sign[4]:
+                                if delta_t > 90 * 60 * 60 and not sign[5]:
                                     if delta_t > 100 * 60 * 60 and not sign[6]:
                                         alarm_signal.emit("下课中...")
                                         sign[6] = True
@@ -555,6 +554,17 @@ def timeout(t: float, signal: QtCore.pyqtSignal()):
     signal.emit()
 
 
+'''''''''''''''''''''''''''''''''''''''
+UI_wrapper for Ui_Register
+Function:
+1. timer -- show_time
+2. read_file -- read from and write to xlsx, create new column
+3. show_images -- show detections in real time
+4. count down -- set duration for register
+5. show log
+'''''''''''''''''''''''''''''''''''''''
+
+
 class Register(QtWidgets.QMainWindow, Ui_Register):
     global globalVars
     time_signal = QtCore.pyqtSignal(str)
@@ -675,6 +685,16 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
         self.running = not self.running
 
 
+'''''''''''''''''''''''''''''''''''''''
+UI_wrapper for Ui_Random
+Function:
+1. call the roll -- yes, no, others
+2. load file -- student list
+3. show pinyin
+4. show log
+'''''''''''''''''''''''''''''''''''''''
+
+
 class Random(QtWidgets.QMainWindow, Ui_Random):
     def __init__(self):
         super(Random, self).__init__()
@@ -695,6 +715,8 @@ class Random(QtWidgets.QMainWindow, Ui_Random):
         self.date = time.strftime("%Y-%m-%d", time.localtime(time.time()))
 
     def start_call(self):
+        if len(self.student_list) == 0:
+            return
         self.count = self.spinBox.value()
         if self.count <= 0:
             return

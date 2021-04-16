@@ -12,7 +12,6 @@ from app.calculator.calculator import Calculator
 from app.notes.notes import Notes, Note, session
 from app.wordprocessor.wordprocessor import WordProcessor
 
-
 import sys
 import os
 import time
@@ -479,6 +478,7 @@ class Entry(QtWidgets.QMainWindow, Ui_Entry):
             self.btn6.clicked.connect(self.minesweep)
             self.btn_alarm.clicked.connect(self.media)
             QtCore.QMetaObject.connectSlotsByName(self)
+            globalVars.alarm = False
         else:
             print("该功能还未实现，敬请期待．")
 
@@ -588,6 +588,69 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
         self.detect_signal.connect(self.detect_callback)
         self.timeout_signal.connect(self.timeout_callback)
 
+        # set front style
+        palette = QPalette()
+        palette.setBrush(QPalette.Background, QBrush(QPixmap("src/classroom.jpeg").scaled(979, 659)))
+        self.setPalette(palette)
+
+        self.new_line.setStyleSheet(
+            '''
+            /*checkbox样式设置*/
+            QCheckBox::indicator { 
+                width: 20px;
+                height: 20px;
+            }
+            /*未选中*/
+            QCheckBox::indicator::unchecked {   
+                image: url(./icon/icon-unchecked.png);
+            }
+            /*选中*/
+            QCheckBox::indicator::checked { 
+                image: url(./icon/icon-checked.png);
+            }
+            '''
+        )
+        self.new_line.setStyleSheet(
+            '''
+            background-color:rgba(255,255,255,0.7);
+            '''
+        )
+        self.feedback.setStyleSheet(
+            '''
+            background-color:rgba(255,255,255,0.7);
+            '''
+        )
+        self.label_3.setStyleSheet(
+            '''
+            background-color:rgba(255,255,255,0.7);
+            '''
+        )
+        self.label_4.setStyleSheet(
+            '''
+            background-color:rgba(255,255,255,0.7);
+            '''
+        )
+        self.label_5.setStyleSheet(
+            '''
+            background-color:rgba(255,255,255,0.7);
+            '''
+        )
+        self.log.setStyleSheet(
+            '''
+            background-color:rgba(255,255,255,0.7);
+            '''
+        )
+        self.output.setStyleSheet(
+            '''
+            background-color:rgba(255,255,255,0.7);
+            '''
+        )
+        self.time.setStyleSheet(
+            '''
+            background-color:rgba(255,255,255,0.7);
+            '''
+        )
+
     def init(self):
         self.new_line.setChecked(True)
         # start my timer
@@ -596,6 +659,8 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
         thread.start()
 
         self.date = time.strftime("%Y-%m-%d", time.localtime(time.time()))
+
+        self.detector = None
 
     def load(self):
         # self.fileName, fileType = QtWidgets.QFileDialog.getOpenFileName(self, "选取文件", os.getcwd(), "All Files(*)")  # ;;Text Files(*.txt)
@@ -675,11 +740,15 @@ class Register(QtWidgets.QMainWindow, Ui_Register):
 
     def startstop(self):
         if self.running:
-            self.df.to_excel(excel_writer=self.directory + '/test.xlsx', header=True, index=False)
             self.btn_startstop.setText("结束")
+            if self.detector is None:
+                return
+            self.df.to_excel(excel_writer=self.directory + '/test.xlsx', header=True, index=False)
             self.detector.start(self.detect_signal)
         else:
             self.btn_startstop.setText("开始")
+            if self.detector is None:
+                return 
             self.detector.stop()
         self.running = not self.running
 
@@ -752,6 +821,8 @@ class Random(QtWidgets.QMainWindow, Ui_Random):
         self.df.to_excel(excel_writer=self.fileName, header=True, index=False)
 
     def yes(self):
+        if len(self.student_list) == 0:
+            return
         self.df.loc[self.names[self.index], self.date] = True
         count = self.slm.rowCount()
         self.slm.insertRow(count)
@@ -774,6 +845,8 @@ class Random(QtWidgets.QMainWindow, Ui_Random):
         self.pinyin.setText(result)
 
     def no(self):
+        if len(self.student_list) == 0:
+            return
         self.df.loc[self.names[self.index], self.date] = False
         count = self.slm.rowCount()
         self.slm.insertRow(count)
@@ -796,6 +869,8 @@ class Random(QtWidgets.QMainWindow, Ui_Random):
         self.pinyin.setText(result)
 
     def others_yes(self):
+        if len(self.student_list) == 0:
+            return
         for i in range(0, len(self.df)):
             if self.df.loc[i, self.date] is None:
                 self.df.loc[i, self.date] = True
